@@ -1,6 +1,9 @@
 import { Text, View } from 'react-native';
 
 import { EditScreenInfo } from './EditScreenInfo';
+import { useStore } from '~/store/store';
+import { Button } from './Button';
+import { router } from 'expo-router';
 
 type ScreenContentProps = {
   title: string;
@@ -9,9 +12,14 @@ type ScreenContentProps = {
 };
 
 export const ScreenContent = ({ title, path, children }: ScreenContentProps) => {
+  const { bears, increasePopulation } = useStore()
   return (
     <View className={styles.container}>
+      <Text>Total Bears {bears}</Text>
+      <Button title='Increase' onPress={increasePopulation} />
+
       <Text className={styles.title}>{title}</Text>
+      <Button title='Body' onPress={() => router.push(`/body`)} />
       <View className={styles.separator} />
       <EditScreenInfo path={path} />
       {children}
