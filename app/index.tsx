@@ -1,19 +1,28 @@
-import { Stack, Link } from 'expo-router';
+// app/index.tsx
+import WelcomeBottomSection from "~/components/welcome/bottom-section";
+import ResetButton from "~/components/welcome/reset-button";
+import WelcomeTopSection from "~/components/welcome/top-section";
+import { StatusBar } from "expo-status-bar";
+import { ImageBackground, View } from "react-native";
 
-import { Container } from '~/components/Container';
-import { ScreenContent } from '~/components/ScreenContent';
-import { Button } from '~/components/ui/button';
+export default function WelcomeScreen() {
+    return (
+        <ImageBackground
+            source={require('~/assets/images/yoga-bg.jpg')}
+            resizeMode="cover"
+            className="flex-1"
+        >
+            <StatusBar style="dark" />
 
-export default function Home() {
-  return (
-    <>
-      <Stack.Screen options={{ title: 'Home' }} />
-      <Container>
-        <ScreenContent path="app/index.tsx" title="Home" />
-        <Link href={{ pathname: '/details', params: { name: 'Dan' } }} asChild>
-          <Button className='w-full bg-gray-900'>Show Details</Button>
-        </Link>
-      </Container>
-    </>
-  );
+            {/* Reset Button Position */}
+            <View className="absolute z-10 right-4 top-12">
+                <ResetButton />
+            </View>
+
+            <View className="flex-1">
+                <WelcomeTopSection />
+                <WelcomeBottomSection />
+            </View>
+        </ImageBackground>
+    );
 }
