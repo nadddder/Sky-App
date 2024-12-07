@@ -12,19 +12,13 @@ const InjuriesContent = memo(function InjuriesContent({
     injuryStatus: InjuryStatus;
     onSelectStatus: (status: InjuryStatus) => void;
 }) {
-    const router = useRouter()
     const { open, isAnimating } = useBodyPainModal();
-    const handleOpenModal = useCallback(() => {
-        if (!isAnimating) {
-            open('/onboarding/injuries-summary');
-        }
-    }, [open, isAnimating]);
 
     return (
         <View className="flex flex-col gap-4 mt-6">
             <Button
                 variant="secondary"
-                onPress={() => open('/onboarding/injuries-summary')}
+                onPress={() => onSelectStatus('has_injuries')}
                 disabled={isAnimating}
             >
                 Yes, I could use some extra care!

@@ -9,12 +9,14 @@ import { InjuryStatus } from '~/types/onboarding'
 import { performanceMonitor } from '~/services/performance'
 import { useRouter } from 'expo-router'
 import { LoadingScreen } from '~/components/loading-screen'
+import { useBodyPainModal } from '~/hooks/body-pain/use-body-pain-modal'
 
 const InjuriesCheckScreen = () => {
   const hasHydrated = useHydration()
   const router = useRouter()
   const storeInjuryStatus = useStore((state) => state.injuryStatus);
   const storeDispatch = useStore((state) => state.dispatch);
+  const { open } = useBodyPainModal()
 
   useEffect(() => {
     console.log('Injuries status:', storeInjuryStatus);
@@ -25,7 +27,7 @@ const InjuriesCheckScreen = () => {
       storeDispatch({ type: 'SET_INJURY_STATUS', payload: status });
 
       if (status === 'has_injuries') {
-        // open('/onboarding/injuries-summary');
+        open('/onboarding/injuries-summary');
       } else {
         Alert.alert(
           'Great!',
