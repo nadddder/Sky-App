@@ -11,6 +11,7 @@ export default function OnboardingLayout() {
             }}
         >
             <Stack.Screen name="name" />
+            <Stack.Screen name="gender" />
             {/* <Stack.Screen name="focus" />
             <Stack.Screen name="injuries-check" />
             <Stack.Screen name="body-pain" />
