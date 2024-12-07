@@ -16,6 +16,7 @@ const FocusOptionContent = memo(function FocusOptionContent({
     title,
     selected
 }: Pick<FocusOptionProps, 'title' | 'selected'>) {
+    console.log(!!selected)
     return (
         <>
             <FontAwesome6

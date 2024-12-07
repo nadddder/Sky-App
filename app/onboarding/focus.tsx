@@ -3,13 +3,15 @@
 import { View, Text } from 'react-native'
 import React, { useCallback, useEffect, useMemo } from 'react'
 import { OnboardingScreen } from '~/components/onboarding/screen'
-import { useStore } from '~/store/root-store';
+import { useHydration, useStore } from '~/store/root-store';
 import { YOGA_FOCUSES } from '~/types/onboarding';
 import { FocusOption } from '~/components/onboarding/focus-option';
 import { performanceMonitor } from '~/services/performance';
 import { useRouter } from 'expo-router';
+import { LoadingScreen } from '~/components/loading-screen';
 
 const FocusScreen = () => {
+  const hasHydrated = useHydration()
 
   const router = useRouter()
   const storeFocuses = useStore((state) => state.focuses);
@@ -17,11 +19,13 @@ const FocusScreen = () => {
   const storeDispatch = useStore((state) => state.dispatch);
 
   useEffect(() => {
-    console.log('Current store focus:', storeFocuses);
+    console.log('Stored focuses:', storeFocuses);
   }, [storeFocuses])
 
-  const currentFocuses = useMemo(() =>
-    storeFocuses.size > 0 ? storeFocuses : new Set<string>(),
+  const currentFocuses = useMemo(() => {
+    console.log("MEMO", storeFocuses)
+    return new Set(Array.isArray(storeFocuses) ? storeFocuses : storeFocuses);
+  },
     [storeFocuses]
   );
 
@@ -50,6 +54,10 @@ const FocusScreen = () => {
     }, 'Focus Continue Navigation');
   }, [storeDispatch]);
 
+  if (!hasHydrated) {
+    return <LoadingScreen />;
+  }
+
   return (
     <OnboardingScreen
       onNext={handleContinue}
@@ -72,14 +80,17 @@ const FocusScreen = () => {
         </Text>
 
         <View className="space-y-2">
-          {YOGA_FOCUSES.map((focus) => (
-            <FocusOption
-              key={focus.id}
-              title={focus.title}
-              selected={currentFocuses.has(focus.id)}
-              onSelect={() => toggleFocus(focus.id)}
-            />
-          ))}
+          {currentFocuses && YOGA_FOCUSES.map((focus) => {
+            console.log(`FOCUS OPTION: ${JSON.stringify(focus)}`)
+            return (
+              <FocusOption
+                key={focus.id}
+                title={focus.title}
+                selected={currentFocuses.has(focus.id)}
+                onSelect={() => toggleFocus(focus.id)}
+              />
+            )
+          })}
         </View>
       </View>
     </OnboardingScreen>

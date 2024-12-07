@@ -4,6 +4,8 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { OnboardingState, OnboardingAction } from '~/types/onboarding'
 import { performanceMonitor } from '~/services/performance'
+import { Slug } from 'react-native-body-highlighter'
+import { PainType } from '~/types/pain'
 
 interface RootState extends OnboardingState {
     // Authentication state
@@ -56,7 +58,11 @@ const handleOnboardingAction = (state: RootState, action: OnboardingAction): Par
         case 'SET_GENDER':
             return { gender: action.payload };
         case 'SET_FOCUSES':
-            return { focuses: action.payload };
+            return {
+                focuses: action.payload instanceof Set
+                    ? action.payload
+                    : new Set(action.payload)
+            };
         case 'SET_INJURY_STATUS':
             return {
                 injuryStatus: action.payload,
@@ -161,6 +167,24 @@ export const useStore = create<RootState>()(
             version: 1,
             onRehydrateStorage: () => (state) => {
                 if (state) {
+                    // Convert arrays back to Sets after rehydration
+                    state.focuses = new Set(state.focuses);
+
+                    // Handle injuries Map conversion
+                    // The rehydrated data comes in the format we defined in partialize
+                    type RehydratedInjury = {
+                        bodyPart: Slug;
+                        pains: PainType[];
+                    };
+
+                    const rehydratedInjuries = state.injuries as unknown as RehydratedInjury[];
+                    state.injuries = new Map(
+                        rehydratedInjuries.map(({ bodyPart, pains }) => [
+                            bodyPart,
+                            new Set(pains)
+                        ])
+                    );
+
                     state._hasHydrated = true;
                     // Log rehydration for debugging
                     console.log('Store rehydrated:', state.name);
