@@ -1,11 +1,25 @@
+// app/onboarding/name.tsx
+
 import { View, Text } from 'react-native'
-import React from 'react'
+import React, { useCallback } from 'react'
+import { OnboardingScreen } from '~/components/onboarding/screen'
 
 const NameScreen = () => {
+  const handleContinue = useCallback(async () => {
+
+  }, []);
   return (
-    <View>
-      <Text>NameScreen</Text>
-    </View>
+    <OnboardingScreen
+      showBackButton={false}
+      onNext={handleContinue}
+      isNextDisabled={false}
+      keyboardAvoid
+      showFooterImage={false}
+      imageOpacity={0.1}
+      backgroundImage={require("~/assets/images/lotus.png")}
+    >
+      <Text>Hey</Text>
+    </OnboardingScreen>
   )
 }
 

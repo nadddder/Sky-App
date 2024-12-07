@@ -3,15 +3,19 @@
 import { View, Text } from "react-native";
 import { Button } from "~/components/ui/button";
 import { router } from 'expo-router';
+import { useBodyPainModal } from "~/hooks/body-pain/use-body-pain-modal";
 
 export default function WelcomeBottomSection() {
     const handleGetStarted = () => {
         router.push('/onboarding/name');
     };
+    const { open } = useBodyPainModal()
 
     const handleLogin = () => {
         // For now, we'll just show an alert
         // router.push('/(app)')
+        open("/")
+
     };
     return (
         <View className="gap-8 px-6 py-24">

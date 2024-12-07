@@ -23,13 +23,11 @@ export default function Layout() {
     if (!hasHydrated) return;
 
     console.log(segments[0])
-    // const inOnboarding = segments[0] === 'onboarding';
-    const inOnboarding = false;
-    // const onWelcome = segments[0] === 'index';
-    const onWelcome = false;
+    const inOnboarding = segments[0] === 'onboarding';
+    const onWelcome = segments[0] === undefined;
 
     if (currentStep === 1 && !isOnboardingComplete && !onWelcome && !inOnboarding) {
-      // router.replace('/');
+      router.replace('/');
     }
   }, [hasHydrated, currentStep, isOnboardingComplete, segments, router]);
 

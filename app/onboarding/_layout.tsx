@@ -1,12 +1,22 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+// app/onboarding/_layout.tsx
+import { Stack } from 'expo-router';
 
-const OnboardingLayout = () => {
+export default function OnboardingLayout() {
     return (
-        <View>
-            <Text>OnboardingLayout</Text>
-        </View>
-    )
+        <Stack
+            screenOptions={{
+                headerShown: false,
+                animation: 'slide_from_right',
+                gestureEnabled: false
+            }}
+        >
+            <Stack.Screen name="name" />
+            {/* <Stack.Screen name="focus" />
+            <Stack.Screen name="injuries-check" />
+            <Stack.Screen name="body-pain" />
+            <Stack.Screen name="injuries-summary" />
+            <Stack.Screen name="experience" />
+            <Stack.Screen name="eager-poses" /> */}
+        </Stack>
+    );
 }
-
-export default OnboardingLayout

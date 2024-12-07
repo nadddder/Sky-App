@@ -1,10 +1,9 @@
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useState } from "react";
-import { Dimensions, Text, View, StyleSheet } from "react-native";
+import { Dimensions, Text, View, StyleSheet, Button } from "react-native";
 import Body, { BodyProps, Slug } from "react-native-body-highlighter";
 import Animated, { SlideInRight, SlideOutRight, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button } from "~/components/ui/button";
 import { useBodyPainModal } from "~/hooks/body-pain/use-body-pain-modal";
 import { useStore } from "~/store/root-store";
 import type { PainType } from '~/types/pain';
@@ -55,12 +54,9 @@ export function BodyPainModal({ isVisible, onClose }: BodyPainModalProps) {
                         <View className="w-20" />
                         <Text className="text-lg font-medium text-white">Body Map</Text>
                         <Button
-                            variant="ghost"
                             onPress={onClose}
-                            className="px-4 py-2"
-                        >
-                            <Text className="text-base text-gray-400">Close</Text>
-                        </Button>
+                            title="Close"
+                        />
                     </View>
                     <Text className="px-4 my-6 text-xl text-center text-white">
                         Touch the areas of your body where you feel discomfort
