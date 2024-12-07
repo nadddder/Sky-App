@@ -4,6 +4,7 @@
     "slug": "sky-yoga-app",
     "version": "1.0.0",
     "scheme": "sky-yoga-app",
+    "newArchEnabled": true,
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -30,9 +31,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ashcan.skyyogaapp"
