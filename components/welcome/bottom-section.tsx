@@ -13,8 +13,7 @@ export default function WelcomeBottomSection() {
 
     const handleLogin = () => {
         // For now, we'll just show an alert
-        // router.push('/(app)')
-        open("/")
+        router.push('/app')
 
     };
     return (

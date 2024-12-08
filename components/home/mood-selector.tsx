@@ -34,7 +34,7 @@ export const MoodSelector = memo(function MoodSelector() {
 
     const handleMoodSelect = useCallback((moodId: string) => {
         setSelectedMood(moodId);
-        // router.push('/practice-form');
+        router.push('/app/practice-form');
     }, []);
 
     const containerStyle = useAnimatedStyle(() => ({
