@@ -20,6 +20,7 @@ import { useStore } from '~/store/root-store';
 import { performanceMonitor } from '~/services/performance';
 import { ViewToggleButtons } from '~/components/onboarding/view-toggle-buttons';
 import { PainTypesList } from '~/components/onboarding/pain-types-list';
+import { useRouter } from 'expo-router';
 
 const COLORS = [
     '#9EA0A3',  // index 0 - Default color (not used)
@@ -36,7 +37,7 @@ const { width, height } = Dimensions.get('window');
 
 export function BodyPainModal({ isVisible, onClose }: BodyPainModalProps) {
     const modalStore = useBodyPainModal();
-
+    const router = useRouter()
     const storeGender = useStore((state) => state.gender);
     const storeInjuries = useStore((state) => state.injuries);
     const storeDispatch = useStore((state) => state.dispatch);
@@ -191,10 +192,10 @@ export function BodyPainModal({ isVisible, onClose }: BodyPainModalProps) {
 
     const handleContinue = useCallback(() => {
         if (nextRoute) {
-            // router.push(nextRoute);
+            router.push(nextRoute as any); // Type assertion to fix type error
         }
         onClose();
-    }, [nextRoute, onClose]);
+    }, [nextRoute, onClose, router]);
 
     const handleClose = useCallback(() => {
         modalStore.setAnimating(true);
@@ -284,7 +285,7 @@ export function BodyPainModal({ isVisible, onClose }: BodyPainModalProps) {
                             <View className="flex-row gap-4">
                                 {selectedBodyPart && (
                                     <Button
-                                    variant="outline"
+                                        variant="outline"
                                         onPress={handleAddInjury}
                                         className="flex-1 bg-white/10"
                                     >
