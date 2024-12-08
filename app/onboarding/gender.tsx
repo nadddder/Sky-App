@@ -33,9 +33,9 @@ const GenderScreen = () => {
     }, 'Gender Continue Navigation');
   }, [storeDispatch]);
 
-  if (!hasHydrated) {
-    return <LoadingScreen />;
-  }
+  // if (!hasHydrated) {
+  //   return <LoadingScreen />;
+  // }
 
   return (
     <OnboardingScreen

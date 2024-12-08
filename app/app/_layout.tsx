@@ -1,4 +1,4 @@
-// app/(app)/_layout.tsx
+// app/app/_layout.tsx
 import { Tabs } from 'expo-router';
 import { FontAwesome6 } from '@expo/vector-icons';
 
@@ -31,7 +31,7 @@ export default function AppLayout() {
                     ),
                 }}
             />
-            <Tabs.Screen
+            {/* <Tabs.Screen
                 name="progress"
                 options={{
                     title: 'Progress',
@@ -39,7 +39,7 @@ export default function AppLayout() {
                         <FontAwesome6 name="chart-line" size={size} color={color} />
                     ),
                 }}
-            />
+            /> */}
             <Tabs.Screen
                 name="exercises"
                 options={{
@@ -49,7 +49,7 @@ export default function AppLayout() {
                     ),
                 }}
             />
-            <Tabs.Screen
+            {/* <Tabs.Screen
                 name="profile"
                 options={{
                     title: 'Profile',
@@ -57,7 +57,7 @@ export default function AppLayout() {
                         <FontAwesome6 name="user" size={size} color={color} />
                     ),
                 }}
-            />
+            /> */}
         </Tabs>
     );
 }
