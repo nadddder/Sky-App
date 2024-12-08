@@ -31,7 +31,7 @@ export default function AppLayout() {
                     ),
                 }}
             />
-            {/* <Tabs.Screen
+            <Tabs.Screen
                 name="progress"
                 options={{
                     title: 'Progress',
@@ -39,7 +39,7 @@ export default function AppLayout() {
                         <FontAwesome6 name="chart-line" size={size} color={color} />
                     ),
                 }}
-            /> */}
+            />
             <Tabs.Screen
                 name="exercises"
                 options={{
