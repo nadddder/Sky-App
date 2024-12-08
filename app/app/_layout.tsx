@@ -49,7 +49,7 @@ export default function AppLayout() {
                     ),
                 }}
             />
-            {/* <Tabs.Screen
+            <Tabs.Screen
                 name="profile"
                 options={{
                     title: 'Profile',
@@ -57,7 +57,7 @@ export default function AppLayout() {
                         <FontAwesome6 name="user" size={size} color={color} />
                     ),
                 }}
-            /> */}
+            />
         </Tabs>
     );
 }
