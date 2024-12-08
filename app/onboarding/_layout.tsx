@@ -16,9 +16,7 @@ export default function OnboardingLayout() {
             <Stack.Screen name="injuries-check" />
             <Stack.Screen name="injuries-summary" />
             <Stack.Screen name="experience" />
-            {/* 
-            <Stack.Screen name="eager-poses" /> 
-            */}
+            <Stack.Screen name="eager-poses" />
         </Stack>
     );
 }

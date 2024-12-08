@@ -45,6 +45,13 @@ export default function Layout() {
             <Stack.Screen name='onboarding' options={{
               gestureEnabled: false
             }} />
+            <Stack.Screen
+              name="app"
+              options={{
+                gestureEnabled: false,
+                animation: 'fade'
+              }}
+            />
           </Stack>
         </BodyPainProvider>
       </GestureHandlerRootView>
