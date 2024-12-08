@@ -3,7 +3,7 @@ import { View, Text, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useState, useCallback, memo } from 'react';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { Button } from '~/components/ui/button';
 import { useBodyPainModal } from '~/hooks/body-pain/use-body-pain-modal';
@@ -49,6 +49,7 @@ export default function PracticeFormScreen() {
     const [duration, setDuration] = useState(15);
     const [hasPain, setHasPain] = useState(false)
     const { open } = useBodyPainModal();
+    const router = useRouter()
 
     const handlePainToggle = useCallback((hasPain: boolean) => {
         setHasPain(hasPain);
@@ -57,16 +58,16 @@ export default function PracticeFormScreen() {
         }
     }, [open]);
 
-    const handlePainCheck = useCallback(() => {
-        setHasPain(true)
-        open('/practice-form');
-    }, [open]);
+    // const handlePainCheck = useCallback(() => {
+    //     setHasPain(true)
+    //     open('/practice-form');
+    // }, [open]);
 
     const handleStartPractice = useCallback(() => {
         // Here we would start the practice with the selected parameters
         console.log('Starting practice with:', { mood, intensity, duration });
         // Navigate to practice screen (to be implemented)
-        // router.push('/exercise-details');
+        router.push('/app/exercise-details');
     }, [mood, intensity, duration]);
 
     return (
