@@ -1,21 +1,15 @@
-// app/onboarding/signup.tsx
+// app/(auth)/signin.tsx
 import { View, Text, TouchableOpacity, Platform, Alert } from 'react-native';
-import { OnboardingScreen } from '~/components/onboarding/screen';
-import { Input } from '~/components/ui/input';
 import { memo, useCallback, useState } from 'react';
-import Animated, {
-    FadeInDown,
-    FadeInUp,
-    Layout
-} from 'react-native-reanimated';
-import { FontAwesome6 } from '@expo/vector-icons';
-import { Button } from '~/components/ui/button';
-import { useKeyboard } from '~/hooks/use-keyboard';
 import { router } from 'expo-router';
+import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
+import { FontAwesome6 } from '@expo/vector-icons';
+import { useKeyboard } from '~/hooks/use-keyboard';
+import { Input } from '~/components/ui/input';
+import { Button } from '~/components/ui/button';
 import { useFirebaseAuth } from '~/hooks/use-firebase-auth';
-import { validateEmail, validatePassword, SignupFormState } from '~/lib/validation/signup';
+import { validateEmail, validatePassword } from '~/lib/validation/signup';
 import { performanceMonitor } from '~/services/performance';
-import { useStore } from '~/store/root-store';
 
 interface SocialButtonProps {
     icon: keyof typeof FontAwesome6.glyphMap;
@@ -48,8 +42,8 @@ const SocialButton = memo(function SocialButton({
     );
 });
 
-const SignupContent = memo(function SignupContent() {
-    const [formState, setFormState] = useState<SignupFormState>({
+const SigninContent = memo(function SigninContent() {
+    const [formState, setFormState] = useState({
         email: '',
         password: '',
         emailError: '',
@@ -57,8 +51,7 @@ const SignupContent = memo(function SignupContent() {
     });
 
     const { keyboardVisible } = useKeyboard();
-    const { signUp, signInWithGoogle, signInWithApple, isLoading, error } = useFirebaseAuth();
-    const dispatch = useStore(state => state.dispatch);
+    const { signIn, signInWithGoogle, signInWithApple, isLoading, error } = useFirebaseAuth();
 
     const validateForm = useCallback((): boolean => {
         const emailError = validateEmail(formState.email);
@@ -73,11 +66,11 @@ const SignupContent = memo(function SignupContent() {
         return !emailError && !passwordError;
     }, [formState.email, formState.password]);
 
-    const handleSignup = useCallback(async () => {
+    const handleSignIn = useCallback(async () => {
         if (!validateForm() || isLoading) return;
 
         try {
-            const response = await signUp({
+            const response = await signIn({
                 email: formState.email,
                 password: formState.password
             });
@@ -87,15 +80,20 @@ const SignupContent = memo(function SignupContent() {
                 return;
             }
 
-            performanceMonitor.runAfterInteractions(async () => {
-                dispatch({ type: 'COMPLETE_ONBOARDING' });
+            if (!response.user?.emailVerified) {
+                Alert.alert('Email Not Verified', 'Please verify your email before signing in.');
                 router.push('/(auth)/verify-email');
-            }, 'Navigate After Signup');
+                return;
+            }
+
+            performanceMonitor.runAfterInteractions(async () => {
+                router.replace('/app/(home)');
+            }, 'Navigate After Sign In');
         } catch (error) {
-            console.error('Signup error:', error);
+            console.error('Sign in error:', error);
             Alert.alert('Error', 'An unexpected error occurred. Please try again.');
         }
-    }, [formState, validateForm, isLoading, signUp, dispatch]);
+    }, [formState, validateForm, isLoading, signIn]);
 
     const handleGoogleSignIn = useCallback(async () => {
         try {
@@ -122,18 +120,21 @@ const SignupContent = memo(function SignupContent() {
         Alert.alert('Coming Soon', 'Password reset will be available soon!');
     }, []);
 
+    const handleSignUp = useCallback(() => {
+        router.push('/onboarding/signup');
+    }, []);
+
     return (
-        <View className="flex-1 px-6">
+        <View className="flex-1 px-6 pt-12 bg-white">
             <Animated.View
                 entering={FadeInDown.delay(300)}
                 className="mb-8"
             >
-                <Text className="mb-2 text-2xl font-bold text-center text-gray-900">
-                    Let's get started!
+                <Text className="mb-2 text-3xl font-bold text-center text-gray-900">
+                    Welcome Back!
                 </Text>
                 <Text className="text-base text-center text-gray-600">
-                    With the info you shared, we'll shape a safe,{'\n'}
-                    personalized practice for you.
+                    Sign in to continue your yoga journey
                 </Text>
             </Animated.View>
 
@@ -169,12 +170,12 @@ const SignupContent = memo(function SignupContent() {
                 />
 
                 <Button
-                    onPress={handleSignup}
+                    onPress={handleSignIn}
                     className="w-full bg-gray-900"
                     loading={isLoading}
                     disabled={isLoading}
                 >
-                    <Text className="text-white">Sign Up</Text>
+                    <Text className="text-white">Sign In</Text>
                 </Button>
 
                 <TouchableOpacity
@@ -189,31 +190,48 @@ const SignupContent = memo(function SignupContent() {
             </Animated.View>
 
             {!keyboardVisible && (
-                <Animated.View
-                    entering={FadeInUp.delay(500)}
-                    className="mt-8"
-                >
-                    <Text className="mb-6 text-sm text-center text-gray-500">
-                        or sign up with
-                    </Text>
+                <>
+                    <Animated.View
+                        entering={FadeInUp.delay(500)}
+                        className="mt-8"
+                    >
+                        <Text className="mb-6 text-sm text-center text-gray-500">
+                            or sign in with
+                        </Text>
 
-                    <View className="flex flex-row justify-center gap-2">
-                        <SocialButton
-                            icon="google"
-                            onPress={handleGoogleSignIn}
-                            label="Sign up with Google"
-                            disabled={isLoading}
-                        />
-                        {Platform.OS === 'ios' && (
+                        <View className="flex flex-row justify-center gap-2">
                             <SocialButton
-                                icon="apple"
-                                onPress={handleAppleSignIn}
-                                label="Sign up with Apple"
+                                icon="google"
+                                onPress={handleGoogleSignIn}
+                                label="Sign in with Google"
                                 disabled={isLoading}
                             />
-                        )}
-                    </View>
-                </Animated.View>
+                            {Platform.OS === 'ios' && (
+                                <SocialButton
+                                    icon="apple"
+                                    onPress={handleAppleSignIn}
+                                    label="Sign in with Apple"
+                                    disabled={isLoading}
+                                />
+                            )}
+                        </View>
+                    </Animated.View>
+
+                    <Animated.View
+                        entering={FadeInUp.delay(600)}
+                        className="mt-8"
+                    >
+                        <TouchableOpacity
+                            onPress={handleSignUp}
+                            className="items-center"
+                            disabled={isLoading}
+                        >
+                            <Text className="text-sm text-gray-600">
+                                Don't have an account? <Text className="font-medium text-gray-900">Sign up</Text>
+                            </Text>
+                        </TouchableOpacity>
+                    </Animated.View>
+                </>
             )}
 
             {error && (
@@ -228,18 +246,6 @@ const SignupContent = memo(function SignupContent() {
     );
 });
 
-export default function SignupScreen() {
-    return (
-        <OnboardingScreen
-            onNext={() => { }}
-            nextButton={false}
-            showProgress
-            keyboardAvoid
-            backgroundImage={require('~/assets/images/lotus.png')}
-            showFooterImage
-            imageOpacity={0.08}
-        >
-            <SignupContent />
-        </OnboardingScreen>
-    );
+export default function SigninScreen() {
+    return <SigninContent />;
 }

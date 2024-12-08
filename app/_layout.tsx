@@ -10,67 +10,27 @@ import { LoadingScreen } from '~/components/loading-screen';
 import { useEffect } from 'react';
 import { BodyPainProvider } from '~/providers/body-pain/body-pain-provider';
 import { AppMonitor, useAppMonitor } from '~/components/monitoring/app-monitor';
+import { useRouteGuard } from '~/hooks/use-route-guard';
+import { auth } from "~/lib/firebase/config";
 
 export default function Layout() {
-  const hasHydrated = useHydration();
-  const router = useRouter();
-  const segments = useSegments();
-  const { logEvent } = useAppMonitor();
-
-  const currentStep = useStore((state) => state.currentStep);
-  const isOnboardingComplete = useStore((state) => state.isOnboardingComplete);
-
-  console.log(`Current Step: ${currentStep}`)
-  console.log(`Is onboarding complete? ${isOnboardingComplete}`)
-
-  // Monitor hydration status
-  useEffect(() => {
-    logEvent('HYDRATION_STATUS', {
-      hasHydrated,
-      currentStep,
-      isOnboardingComplete,
-      currentSegment: segments[0],
-    });
-  }, [hasHydrated, currentStep, isOnboardingComplete, segments]);
-
-  // Monitor store state
-  useEffect(() => {
-    const storeState = useStore.getState();
-    logEvent('STORE_STATE', {
-      _hasHydrated: storeState._hasHydrated,
-      isOnboardingComplete: storeState.isOnboardingComplete,
-      currentStep: storeState.currentStep,
-      // Add other relevant state properties
-    });
-  }, [hasHydrated]);
+  const setAuthToken = useStore(state => state.setAuthToken);
+  useRouteGuard();
 
   useEffect(() => {
-    if (!hasHydrated) return;
-
-    console.log(segments[0])
-    const inOnboarding = segments[0] === 'onboarding';
-    const onWelcome = segments[0] === undefined;
-
-    logEvent('NAVIGATION_CHECK', {
-      currentStep,
-      isOnboardingComplete,
-      inOnboarding,
-      onWelcome,
-      segment: segments[0],
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+        setAuthToken(token);
+      } else {
+        setAuthToken(undefined);
+      }
     });
 
-    if (currentStep === 1 && !isOnboardingComplete && !onWelcome && !inOnboarding) {
-      router.replace('/');
-    }
-  }, [hasHydrated, currentStep, isOnboardingComplete, segments, router]);
+    return () => unsubscribe();
+  }, [setAuthToken]);
 
 
-  // if (!hasHydrated) {
-  //   logEvent('SHOWING_LOADING_SCREEN', {
-  //     timestamp: new Date().toISOString(),
-  //   });
-  //   return <LoadingScreen />;
-  // }
 
   return (
     <ErrorBoundary>
@@ -82,6 +42,12 @@ export default function Layout() {
             <Stack.Screen name='onboarding' options={{
               gestureEnabled: false
             }} />
+            <Stack.Screen
+              name="(auth)"
+              options={{
+                gestureEnabled: false,
+              }}
+            />
             <Stack.Screen
               name="app"
               options={{

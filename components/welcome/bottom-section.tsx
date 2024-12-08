@@ -9,11 +9,9 @@ export default function WelcomeBottomSection() {
     const handleGetStarted = () => {
         router.push('/onboarding/name');
     };
-    const { open } = useBodyPainModal()
 
     const handleLogin = () => {
-        // For now, we'll just show an alert
-        router.push('/app')
+        router.push('/(auth)/signin');
 
     };
     return (

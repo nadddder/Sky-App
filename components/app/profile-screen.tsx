@@ -10,6 +10,7 @@ import Animated, {
     Layout
 } from 'react-native-reanimated';
 import { router } from 'expo-router';
+import { useFirebaseAuth } from '~/hooks/use-firebase-auth';
 
 interface MenuItemProps {
     icon: keyof typeof FontAwesome6.glyphMap;
@@ -66,10 +67,7 @@ const SectionTitle = memo(function SectionTitle({
 });
 
 export const ProfileScreen = memo(function ProfileScreen() {
-
-    const handleLogout = useCallback(() => {
-
-    }, []);
+    const { signOut } = useFirebaseAuth();
 
     return (
         <SafeAreaView className="flex-1 bg-background">
@@ -176,7 +174,7 @@ export const ProfileScreen = memo(function ProfileScreen() {
                 <MenuItem
                     icon="right-from-bracket"
                     label="Logout"
-                    onPress={handleLogout}
+                    onPress={signOut}
                     delay={900}
                     color="#ef4444"
                 />

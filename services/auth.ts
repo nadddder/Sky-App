@@ -8,7 +8,8 @@ import {
     AuthError,
     UserCredential,
     OAuthProvider,
-    User
+    User,
+    sendEmailVerification
 } from 'firebase/auth';
 import { auth } from '~/lib/firebase/config';
 import { performanceMonitor } from './performance';
@@ -74,6 +75,8 @@ class AuthService {
                     credentials.email,
                     credentials.password
                 );
+                // Send verification email
+                await sendEmailVerification(userCredential.user);
                 return this.handleAuthSuccess(userCredential);
             } catch (error) {
                 return this.handleAuthError(error as AuthError);
@@ -132,6 +135,31 @@ class AuthService {
                 return this.handleAuthError(error as AuthError);
             }
         }, 'Apple Sign In');
+    }
+
+    async checkEmailVerification(): Promise<boolean> {
+        return performanceMonitor.runAfterInteractions(async () => {
+            try {
+                await auth.currentUser?.reload();
+                return auth.currentUser?.emailVerified ?? false;
+            } catch (error) {
+                console.error('Error checking email verification:', error);
+                return false;
+            }
+        }, 'Check Email Verification');
+    }
+
+    async resendVerificationEmail(): Promise<void> {
+        return performanceMonitor.runAfterInteractions(async () => {
+            try {
+                if (auth.currentUser) {
+                    await sendEmailVerification(auth.currentUser);
+                }
+            } catch (error) {
+                console.error('Error resending verification email:', error);
+                throw error;
+            }
+        }, 'Resend Verification Email');
     }
 }
 
