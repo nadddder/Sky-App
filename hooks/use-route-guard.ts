@@ -55,26 +55,26 @@ export function useRouteGuard() {
 
         // Handle onboarding step protection
         if (inOnboarding) {
-            const currentSegment = segments[1] === undefined ? "/" : segments[1];
-            const stepMap: Record<string, number> = {
-                'name': 1,
-                'gender': 2,
-                'focus': 3,
-                'injuries-check': 3,
-                'injuries-summary': 3,
-                'experience': 4,
-                'eager-poses': 4,
-            };
+            // const currentSegment = segments[1] === undefined ? "/" : segments[1];
+            // const stepMap: Record<string, number> = {
+            //     'name': 1,
+            //     'gender': 2,
+            //     'focus': 3,
+            //     'injuries-check': 3,
+            //     'injuries-summary': 3,
+            //     'experience': 4,
+            //     'eager-poses': 4,
+            // };
 
-            const requiredStep = stepMap[currentSegment];
-            if (requiredStep && currentStep < requiredStep) {
-                const previousStep = Object.entries(stepMap).find(([, step]) => step === currentStep)?.[0];
-                if (previousStep) {
-                    router.replace('/onboarding/' + previousStep as '/onboarding/name' | '/onboarding/gender' | '/onboarding/focus' | '/onboarding/injuries-check' | '/onboarding/injuries-summary' | '/onboarding/experience' | '/onboarding/eager-poses');
-                } else {
-                    router.replace('/onboarding/name');
-                }
-            }
+            // const requiredStep = stepMap[currentSegment];
+            // if (requiredStep && currentStep < requiredStep) {
+            //     const previousStep = Object.entries(stepMap).find(([, step]) => step === currentStep)?.[0];
+            //     if (previousStep) {
+            //         router.replace('/onboarding/' + previousStep as '/onboarding/name' | '/onboarding/gender' | '/onboarding/focus' | '/onboarding/injuries-check' | '/onboarding/injuries-summary' | '/onboarding/experience' | '/onboarding/eager-poses');
+            //     } else {
+            //         router.replace('/onboarding/name');
+            //     }
+            // }
         }
 
     }, [hasHydrated, segments, isAuthenticated, isOnboardingComplete, currentStep, router]);

@@ -5,8 +5,7 @@ import '../global.css';
 
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useHydration, useStore } from '~/store/root-store';
-import { LoadingScreen } from '~/components/loading-screen';
+import {  useStore } from '~/store/root-store';
 import { useEffect } from 'react';
 import { BodyPainProvider } from '~/providers/body-pain/body-pain-provider';
 import { AppMonitor, useAppMonitor } from '~/components/monitoring/app-monitor';
