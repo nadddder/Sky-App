@@ -1,10 +1,11 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, ActivityIndicator } from 'react-native';
+// app/app/(home)/exercise-details.tsx
+
+import React, { useCallback, useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Entypo, Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useVideoPlayer, type PlayerError, type VideoPlayerStatus } from 'expo-video';
 import Animated, {
     FadeInDown,
     SlideInRight,
@@ -12,150 +13,11 @@ import Animated, {
     withSpring,
     useSharedValue,
 } from 'react-native-reanimated';
-import { TheVideoPlayer } from '~/components/VideoPlayer';
-
-const EXERCISE_DATA = [
-    {
-        id: 0,
-        title: 'Beginner Hip Opening',
-        image: require('~/assets/images/poses/flexibility/beginner-1.png'),
-        video: {
-            uri: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-            metadata: {
-                title: 'Deep Stretch for Hips & Hamstrings - Beginner',
-                artist: 'SKY Yoga',
-            }
-        }
-    },
-    {
-        id: 1,
-        title: 'Intermediate Flow',
-        image: require('~/assets/images/poses/flexibility/intermediate-1.png'),
-        video: {
-            uri: 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-            metadata: {
-                title: 'Deep Stretch for Hips & Hamstrings - Intermediate',
-                artist: 'SKY Yoga',
-            }
-        }
-    },
-    {
-        id: 2,
-        title: 'Advanced Sequence',
-        image: require('~/assets/images/poses/flexibility/advanced-1.png'),
-        video: {
-            uri: 'https://storage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
-            metadata: {
-                title: 'Deep Stretch for Hips & Hamstrings - Advanced',
-                artist: 'SKY Yoga',
-            }
-        }
-    },
-    {
-        id: 3,
-        title: 'Expert Challenge',
-        image: require('~/assets/images/poses/flexibility/expert-1.png'),
-        video: {
-            uri: 'https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
-            metadata: {
-                title: 'Deep Stretch for Hips & Hamstrings - Expert',
-                artist: 'SKY Yoga',
-            }
-        }
-    },
-] as const;
+import { EXERCISE_DATA } from '~/data/video-player';
+import { DurationTest } from '~/components/video-duration/duration-test';
+import { EnhancedVideoPlayer } from '~/components/video-player/enhanced-video-player';
 
 
-
-const VideoPlayer = () => {
-    const [showOverlay, setShowOverlay] = useState(true);
-    const [showControls, setShowControls] = useState(true);
-    const { currentVideoIndex, setCurrentVideoIndex } = React.useContext(VideoContext);
-
-    const player = useVideoPlayer(EXERCISE_DATA[currentVideoIndex].video, player => {
-        player.playbackRate = 1.0;
-        player.staysActiveInBackground = true;
-        player.play();
-    });
-
-    // Track playback state
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [status, setStatus] = useState<VideoPlayerStatus>(player.status);
-    const [error, setError] = useState<PlayerError | null>(null);
-
-    useEffect(() => {
-        const playToEndSubscription = player.addListener('playToEnd', () => {
-            // Check if there's a next video in the sequence
-            if (currentVideoIndex < EXERCISE_DATA.length - 1) {
-                // Small delay before transitioning to next video for better UX
-                setTimeout(() => {
-                    setCurrentVideoIndex(currentVideoIndex + 1);
-                }, 500);
-            }
-        });
-
-        return () => {
-            playToEndSubscription.remove();
-        };
-    }, [currentVideoIndex, player, setCurrentVideoIndex]);
-
-    useEffect(() => {
-        const playingListener = player.addListener('playingChange', ({ isPlaying }) => {
-            setIsPlaying(isPlaying);
-        });
-
-        const statusListener = player.addListener('statusChange', ({ status, error }) => {
-            setStatus(status);
-            setError(error || null);
-        });
-
-        return () => {
-            playingListener.remove();
-            statusListener.remove();
-        };
-    }, [player]);
-
-    // Hide overlay after playback starts
-    useEffect(() => {
-        if (isPlaying) {
-            const timer = setTimeout(() => setShowOverlay(false), 1000);
-            return () => clearTimeout(timer);
-        } else {
-            setShowOverlay(true);
-        }
-    }, [isPlaying]);
-
-    useEffect(() => {
-        setShowOverlay(true);
-        setIsPlaying(false);
-    }, [currentVideoIndex]);
-
-    const handleVideoPress = useCallback(() => {
-        setShowControls(prev => !prev);
-    }, []);
-
-    if (error) {
-        return (
-            <View className="items-center justify-center w-full overflow-hidden bg-gray-100 aspect-video rounded-2xl">
-                <Text className="text-red-500">Error loading video</Text>
-                <Text className="mt-2 text-sm text-gray-500">{error.message}</Text>
-            </View>
-        );
-    }
-
-    return (
-
-        <>
-            <TheVideoPlayer addPlayer={player} source={EXERCISE_DATA[0].video} />
-            {/* Loading State */}
-            {status === 'loading' && (
-                <View className="absolute inset-0 items-center justify-center bg-black/10">
-                    <ActivityIndicator size="large" color="#ffffff" />
-                </View>
-            )}
-        </>
-    );
-};
 
 const VideoContext = React.createContext<{
     currentVideoIndex: number;
@@ -176,7 +38,16 @@ const ExerciseDetails = () => {
         ),
     }));
 
+    const handleVideoComplete = useCallback(() => {
+        // Handle completion of all videos
+        console.log('All videos completed');
+    }, []);
+
     const handlePoseClick = useCallback((index: number) => {
+        setCurrentVideoIndex(index);
+    }, []);
+
+    const handleIndexChange = useCallback((index: number) => {
         setCurrentVideoIndex(index);
     }, []);
 
@@ -188,18 +59,18 @@ const ExerciseDetails = () => {
                 {/* Header */}
                 <Animated.View
                     style={headerStyle}
-                    className="absolute top-0 left-0 right-0 z-10"
+                    className="absolute top-0 right-0 left-0 z-10"
                 >
-                    <View className="flex-row items-center justify-between px-4 py-4">
+                    <View className="flex-row justify-between items-center px-4 py-4">
                         <TouchableOpacity
                             onPress={() => router.back()}
-                            className="items-center justify-center w-10 h-10 rounded-full bg-white/80"
+                            className="justify-center items-center w-10 h-10 rounded-full bg-white/80"
                         >
                             <Entypo name="chevron-left" size={24} color="#1f2937" />
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            className="items-center justify-center w-10 h-10 rounded-full bg-white/80"
+                            className="justify-center items-center w-10 h-10 rounded-full bg-white/80"
                         >
                             <Entypo name="dots-three-horizontal" size={24} color="#1f2937" />
                         </TouchableOpacity>
@@ -236,8 +107,21 @@ const ExerciseDetails = () => {
                             </View>
                         </View>
 
-                        {/* Video Player */}
-                        <VideoPlayer />
+                        <View className="w-full">
+                            {/* <EnhancedVideoPlayer /> */}
+                            <DurationTest />
+                            {/* <SequenceVideoPlayer
+                                exerciseData={EXERCISE_DATA}
+                                currentIndex={currentVideoIndex}
+                                onVideoComplete={() => {
+                                    // Handle completion of the sequence
+                                    console.log('Video sequence completed');
+                                }}
+                                onIndexChange={(index) => {
+                                    setCurrentVideoIndex(index);
+                                }}
+                            /> */}
+                        </View>
 
                         {/* Description */}
                         <Animated.Text
@@ -274,7 +158,7 @@ const ExerciseDetails = () => {
                                                 resizeMode="cover"
                                             />
                                             {currentVideoIndex === index && (
-                                                <View className="absolute p-1 bg-blue-500 rounded-full bottom-1 right-1">
+                                                <View className="absolute right-1 bottom-1 p-1 bg-blue-500 rounded-full">
                                                     <Ionicons name="play" size={12} color="white" />
                                                 </View>
                                             )}

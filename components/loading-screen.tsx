@@ -57,7 +57,7 @@ const LoadingIndicator = memo(function LoadingIndicator({
     return (
         <Animated.View
             entering={FadeIn.delay(150)}
-            className="items-center justify-center"
+            className="justify-center items-center"
         >
             <ActivityIndicator
                 size={size}
@@ -79,7 +79,7 @@ export const LoadingScreen = memo(function LoadingScreen({
     return (
         <Container
             className={cn(
-                'flex-1 items-center justify-center',
+                'flex-1 justify-center items-center',
                 getBackgroundColor(variant),
                 className
             )}

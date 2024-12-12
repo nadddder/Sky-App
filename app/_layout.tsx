@@ -8,13 +8,12 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {  useStore } from '~/store/root-store';
 import { useEffect } from 'react';
 import { BodyPainProvider } from '~/providers/body-pain/body-pain-provider';
-import { AppMonitor, useAppMonitor } from '~/components/monitoring/app-monitor';
-import { useRouteGuard } from '~/hooks/use-route-guard';
+import { AppMonitor} from '~/components/monitoring/app-monitor';
 import { auth } from "~/lib/firebase/config";
 
 export default function Layout() {
   const setAuthToken = useStore(state => state.setAuthToken);
-  useRouteGuard();
+  // useRouteGuard();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
